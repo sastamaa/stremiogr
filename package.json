@@ -6,7 +6,7 @@
   "dependencies": {
     "stremio-addon-sdk": "^1.6.10",
     "puppeteer-core": "^21.0.0",
-    "@sparticuz/chromium": "^119.0.0"
+    "@sparticuz/chromium-min": "^119.0.0"
   },
   "engines": {
     "node": ">=18.x"
