@@ -1,10 +1,10 @@
 {
   "name": "stremiogr",
   "version": "1.0.0",
-  "description": "StremioGR addon",
+  "description": "Stremio addon",
   "main": "api/index.js",
   "dependencies": {
-    "stremio-addon-sdk": "^1.14.3",
+    "stremio-addon-sdk": "^1.6.10",
     "puppeteer-core": "^21.0.0",
     "@sparticuz/chromium": "^119.0.0"
   },
