@@ -64,7 +64,7 @@ builder.defineStreamHandler(async (args) => {
         return Promise.resolve({
             streams: [
                 {
-                    title: `CoverAPI (Грецька)`,
+                    title: `CoverAPI`,
                     url: streamUrl 
                 }
             ]
