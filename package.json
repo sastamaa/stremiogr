@@ -1,0 +1,14 @@
+{
+  "name": "stremiogr",
+  "version": "1.0.0",
+  "description": "StremioGR addon",
+  "main": "api/index.js",
+  "dependencies": {
+    "stremio-addon-sdk": "^1.14.3",
+    "puppeteer-core": "^21.0.0",
+    "@sparticuz/chromium": "^119.0.0"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}
