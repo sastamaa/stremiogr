@@ -1,6 +1,6 @@
-const { addonBuilder, getRouter } = require('stremio-addon-sdk');
+const { addonBuilder } = require('stremio-addon-sdk');
 const puppeteerCore = require('puppeteer-core');
-const chromium = require('@sparticuz/chromium'); // Прибрали -min
+const chromium = require('@sparticuz/chromium'); 
 
 const manifest = {
     id: 'org.coverapi.stremio',
@@ -26,7 +26,7 @@ builder.defineStreamHandler(async (args) => {
         browser = await puppeteerCore.launch({
             args: chromium.args,
             defaultViewport: chromium.defaultViewport,
-            executablePath: await chromium.executablePath(), // Залишаємо просто функцію
+            executablePath: await chromium.executablePath(), 
             headless: chromium.headless,
             ignoreHTTPSErrors: true,
         });
@@ -64,4 +64,46 @@ builder.defineStreamHandler(async (args) => {
     }
 });
 
-module.exports = getRouter(builder.getInterface());
+// Спеціальний обробник для Vercel
+const addonInterface = builder.getInterface();
+
+module.exports = async function(req, res) {
+    // Встановлюємо правильні заголовки для Stremio (CORS)
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
+    }
+
+    // Маршрутизатор
+    const { url } = req;
+
+    if (url === '/manifest.json') {
+        return res.json(addonInterface.manifest);
+    }
+
+    if (url.startsWith('/stream/')) {
+        // Витягуємо параметри із запиту (наприклад, /stream/movie/tt14181714.json)
+        const parts = url.split('/');
+        if (parts.length >= 4) {
+            const type = parts[2];
+            const id = parts[3].replace('.json', '');
+            
+            try {
+                const result = await addonInterface.get({ resource: 'stream', type, id });
+                return res.json(result);
+            } catch (err) {
+                return res.status(500).json({ err: 'Handler error' });
+            }
+        }
+    }
+
+    // Якщо це головна сторінка або невідомий маршрут
+    res.send(`
+        <h1>CoverAPI Greek Addon is Running!</h1>
+        <p>Для встановлення додайте <b>/manifest.json</b> до цієї адреси та вставте в Stremio.</p>
+    `);
+};
