@@ -1,6 +1,6 @@
 const { addonBuilder, getRouter } = require('stremio-addon-sdk');
 const puppeteerCore = require('puppeteer-core');
-const chromium = require('@sparticuz/chromium-min');
+const chromium = require('@sparticuz/chromium'); // Прибрали -min
 
 const manifest = {
     id: 'org.coverapi.stremio',
@@ -15,9 +15,6 @@ const manifest = {
 
 const builder = new addonBuilder(manifest);
 
-// Пряме посилання на полегшений Chromium для Vercel
-const CHROMIUM_PACK = 'https://github.com/Sparticuz/chromium/releases/download/v119.0.0/chromium-v119.0.0-pack.tar';
-
 builder.defineStreamHandler(async (args) => {
     const imdbId = args.id.split(':')[0]; 
     const targetUrl = `https://coverapi.store/embed/${imdbId}/`;
@@ -29,7 +26,7 @@ builder.defineStreamHandler(async (args) => {
         browser = await puppeteerCore.launch({
             args: chromium.args,
             defaultViewport: chromium.defaultViewport,
-            executablePath: await chromium.executablePath(CHROMIUM_PACK), // Завантажуємо браузер
+            executablePath: await chromium.executablePath(), // Залишаємо просто функцію
             headless: chromium.headless,
             ignoreHTTPSErrors: true,
         });
@@ -48,7 +45,7 @@ builder.defineStreamHandler(async (args) => {
         });
 
         await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 8000 });
-        await new Promise(r => setTimeout(r, 1500)); // Чекаємо 1.5 сек
+        await new Promise(r => setTimeout(r, 1500));
 
     } catch (error) {
         console.error('Помилка парсингу:', error.message);
